@@ -1,0 +1,32 @@
+name: Go UnitTests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        go-version:
+          - '1.22'
+          - 'stable'
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Run tests
+        run: go test -v -race -shuffle=on ./...
