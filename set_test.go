@@ -75,9 +75,9 @@ func TestSizeTableDriven(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
-			lenSet := tt.inputSet.Size()
-			if lenSet != tt.sizeSet {
-				t.Errorf("got %d, want %d", lenSet, tt.sizeSet)
+			expectedLen := tt.inputSet.Size()
+			if expectedLen != tt.sizeSet {
+				t.Errorf("got %d, want %d", expectedLen, tt.sizeSet)
 			}
 		})
 	}
