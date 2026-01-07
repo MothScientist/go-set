@@ -1,8 +1,8 @@
 package set
 
 import (
+	"context"
 	"fmt"
-	"maps"
 	"runtime"
 	"strings"
 	"sync"
@@ -132,6 +132,11 @@ func (s *set[T]) Pop() T {
 func (s *set[T]) ExtendFromSlice(slice []T) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	s.extendFromSlice(slice)
+}
+
+// extendFromSlice internal method without a mutex
+func (s *set[T]) extendFromSlice(slice []T) {
 	for _, val := range slice {
 		s.insert(val)
 	}
@@ -205,7 +210,31 @@ func (s *set[T]) ToSlice() []T {
 func (s *set[T]) ToMap() map[T]struct{} {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	return maps.Clone(s.s)
+
+	m := make(map[T]struct{}, len(s.s))
+	for val := range s.s {
+		m[val] = struct{}{}
+	}
+
+	return m
+}
+
+func (s *set[T]) ToChan(ctx context.Context) <-chan T {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	ch := make(chan T)
+	go func() {
+        defer close(ch)
+        for item := range s.s {
+            select {
+            case ch <- item:
+            case <-ctx.Done():
+                return
+            }
+        }
+    }()
+    return ch
 }
 
 // Do applies the passed function to each element of the set.
