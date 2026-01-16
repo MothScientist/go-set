@@ -142,15 +142,6 @@ func (s *set[T]) extendFromSlice(slice []T) {
 	}
 }
 
-// ExtendFromMap adds keys from the map to the set
-func (s *set[T]) ExtendFromMap(m map[T]any) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	for k := range m {
-		s.insert(k)
-	}
-}
-
 // UnionUpdate extends a set with elements from another set.
 func (s *set[T]) UnionUpdate(src *set[T]) {
 	src.mu.RLock()

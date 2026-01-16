@@ -5,6 +5,14 @@ import (
 	"reflect"
 )
 
+func ExtendFromMap[T comparable, V any](s *set[T], src map[T]V) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+    for val := range src {
+        s.insert(val)
+    }
+}
+
 // Clone returns a shallowly copied set.
 // Reference types will refer to the old object.
 func Clone[T comparable](s *set[T]) *set[T] {

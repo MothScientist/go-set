@@ -203,7 +203,7 @@ func TestExtendFromMapIntTableDriven(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
-			tt.inputSet.ExtendFromMap(tt.extendMap)
+			ExtendFromMap(tt.inputSet, tt.extendMap)
 			if !Equal(tt.inputSet, tt.wantSet) {
 				t.Errorf("got %s, want %s", tt.inputSet, tt.wantSet)
 			}
